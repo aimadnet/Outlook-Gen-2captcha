@@ -1,7 +1,7 @@
 # Outlook Gen
 Outlook Generator using [2captcha.com]
 
-![Screenshot](screenshot.png)
+![Screenshot](preview.png)
 
 * get your captcha key at: https://2captcha.com/?from=16176851
 * put proxies in `./data/proxies.txt`  
