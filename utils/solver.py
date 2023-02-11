@@ -6,22 +6,34 @@ from json     import load
 class Funcaptcha:
     key = load(open("./data/config.json"))['captcha_key']
 
-    def getKey() -> str:
-        req = post("https://api.anycaptcha.com/createTask", json = {
-                "clientKey": Funcaptcha.key,
-                "task": {
-                    "type"            : "FunCaptchaTaskProxyless",
-                    "websitePublicKey": "B7D8911C-5CC8-A9A3-35B0-554ACEE604DA",
-                    "websiteURL"      : "https://iframe.arkoselabs.com",
-                },
+    def getKey(uaid, proxy=None) -> str:
+        req = post("http://2captcha.com/in.php", params = {
+            "key": Funcaptcha.key,
+            "proxy": proxy if proxy else "",
+            "proxytype": "HTTP",
+            "method": "funcaptcha",
+            "publickey": "B7D8911C-5CC8-A9A3-35B0-554ACEE604DA",
+            "surl": "https://client-api.arkoselabs.com",
+            "pageurl": "https://signup.live.com/signup?lic=1&uaid=" + str(uaid)
         })
 
-        while True:
-            sleep(0.3)
-            task = post("https://api.anycaptcha.com/getTaskResult", json = {
-                "clientKey" : Funcaptcha.key,
-                "taskId"    : req.json()["taskId"]
-            })
+        if "OK|" in req.text:
+            captcha_id = req.text.split("|")[1]
+            sleep(10)
 
-            if task.json()["status"] == "ready":
-                return task.json()["solution"]["token"]
+            while True:
+                sleep(0.3)
+                task = post("http://2captcha.com/res.php", params = {
+                    "key": Funcaptcha.key,
+                    "action": "get",
+                    "id": captcha_id
+                })
+                
+                if "OK|" in task.text: 
+                    token = task.text.replace("OK|", "")
+                    return token
+
+                if task.text == "ERROR_CAPTCHA_UNSOLVABLE":
+                    return None
+        
+        return None

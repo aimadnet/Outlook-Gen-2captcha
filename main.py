@@ -7,11 +7,36 @@ from utils.solver import Funcaptcha
 from random       import randint, choice
 from names        import get_first_name, get_last_name
 from os           import urandom
-from time         import time
+from time         import time, sleep
 from threading    import Thread
+from os           import system, name
+import sys
+
+def clear():
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
+
+clear()
+
+def printf(text, speed=0.005):
+    for char in text: print("" + char, end="");sys.stdout.flush();sleep(speed)
+
+print("""\033[36m
+      ▄• ▄▌▄▄▄▄▄▄▄▌              ▄ •▄      ▄▄ • ▄▄▄ . ▐ ▄ 
+▪     █▪██▌•██  ██•  ▪     ▪     █▌▄▌▪    ▐█ ▀ ▪▀▄.▀·•█▌▐█
+ ▄█▀▄ █▌▐█▌ ▐█.▪██▪   ▄█▀▄  ▄█▀▄ ▐▀▀▄·    ▄█ ▀█▄▐▀▀▪▄▐█▐▐▌
+▐█▌.▐▌▐█▄█▌ ▐█▌·▐█▌▐▌▐█▌.▐▌▐█▌.▐▌▐█.█▌    ▐█▄▪▐█▐█▄▄▌██▐█▌
+ ▀█▄▀▪ ▀▀▀  ▀▀▀ .▀▀▀  ▀█▄▀▪ ▀█▄▀▪·▀  ▀    ·▀▀▀▀  ▀▀▀ ▀▀ █▪
+\033[0m""")
+printf("by tekky & aimadnet\n\n", 0.055)
+printf("Starting...\n\n", 0.055)
 
 class Outlook:
     def __init__(this, proxy: str = None):
+        this.proxy           = proxy if proxy else None
+
         this.client          = Session(client_identifier='chrome_108')
         this.client.proxies  = {'http' : f'http://{proxy}','https': f'http://{proxy}'} if proxy else None
         
@@ -35,7 +60,7 @@ class Outlook:
 
     @staticmethod
     def log(message: str):
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] {message}")
+        printf(f"[{datetime.now().strftime('%H:%M:%S')}] {message}\n")
         
     def __init_client(this):
         content = this.client.get('https://signup.live.com/signup?lic=1', headers = {
@@ -172,7 +197,7 @@ class Outlook:
         }
         
         if captcha_solved:
-            cap_token = Funcaptcha.getKey()
+            cap_token = Funcaptcha.getKey(this.uaid, this.proxy)
             Outlook.log(f'solved captcha: [{cap_token[:100]}...]')
             
             payload.update({

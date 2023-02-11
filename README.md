@@ -1,6 +1,6 @@
 # Outlook Gen
-Outlook Generator using [anycaptcha.com]
+Outlook Generator using [2captcha.com]
 
-> get your captcha key at: https://anycaptcha.com?referral=11552  
+> get your captcha key at: https://2captcha.com/?from=16176851
 > put proxies in `./data/proxies.txt`  
 > run with : `python main.py`
