@@ -59,11 +59,16 @@ class Outlook:
     
 
     @staticmethod
-    def log(message: str):
-        printf(f"[{datetime.now().strftime('%H:%M:%S')}] {message}\n")
+    def log(message: str, color: str = ""):
+        if color == "green":
+            print(f"\33[92m[{datetime.now().strftime('%H:%M:%S')}] {message}\033[0m")
+        elif color == "red":
+            print(f"\33[91m[{datetime.now().strftime('%H:%M:%S')}] {message}\033[0m")
+        else:
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] {message}")
         
     def __init_client(this):
-        content = this.client.get('https://signup.live.com/signup?lic=1', headers = {
+        content = this.client.get('https://signup.live.com/signup?ne=1&lic=1', headers = {
             "host"            : "signup.live.com",
             "accept"          : "*/*",
             "accept-encoding" : "gzip, deflate, br",
@@ -161,7 +166,7 @@ class Outlook:
             "user-agent"        : this.userAgent,
             "x-ms-apitransport" : "xhr",
             "x-ms-apiversion"   : "2",
-            "referrer"          : "https://signup.live.com/?lic=1"
+            "referrer"          : "https://signup.live.com/signup?ne=1&lic=1"
         }
     
     def __base_payload(this, captcha_solved: bool) -> dict:
@@ -250,11 +255,11 @@ def register_loop(proxies: list):
         stop            = time() - start
 
         if status == 'Success':
-            Outlook.log(f'registered acc: [{account["MemberName"]}:...] {round(stop, 2)}s')
+            Outlook.log(f'registered acc: [{account["MemberName"]}:...] {round(stop, 2)}s', color="green")
             with open('./data/accounts.txt', 'a') as f:
                 f.write(f'{account["MemberName"]}:{account["password"]}\n')
         else:
-            Outlook.log(f'register error: [{status}] {round(stop, 2)}s')
+            Outlook.log(f'register error: [{status}] {round(stop, 2)}s', color="red")
 
 if __name__ == "__main__":
     proxies = open('./data/proxies.txt').read().splitlines()
